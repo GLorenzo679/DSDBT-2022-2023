@@ -1,0 +1,74 @@
+// Select the database to use
+use('restaurantsDB');
+
+//Query a:
+db.restaurants.find({ cost: "medium"});
+
+//Query b:
+db.restaurants.find({
+    review: {$gt: 4},
+    $or: [
+        {cost: "medium"},
+        {cost: "low"}
+    ]
+})
+
+//Query c:
+db.restaurants.find({
+    maxPeople: {$gt: 5},
+    $or: [
+        {tag: {$in: ["italian", "japanese"]}, cost: {$in: ["medium", "high"]}},
+        {tag: {$nin: ["italian", "japanese"]}, review: {$gt: 4.5}}
+    ]
+})
+
+//Query d:
+db.restaurants.aggregate([{
+    $group: {
+      _id: null,
+      averageReview: {
+        $avg: "$review"
+      }
+    }
+}])
+
+//Query e:
+db.restaurants.find({
+    review: {$gt: 4.5},
+    maxPeople: {$gt: 5}
+}).count()
+
+//Query f:
+/*
+    map-reduce method deprecated, use aggregate pipeline
+*/
+
+//Query g:
+/*
+    map-reduce method deprecated, use aggregate pipeline
+*/
+
+//Query h:
+db.restaurants.find({
+    location: {
+        $near: {
+            $geometry: {
+                type: "Point",
+                coordinates: [45.0644, 7.6598]
+            }
+        }
+    }
+}).limit(1)
+
+//Query i:
+db.restaurants.find({
+    location: {
+        $near: {
+            $geometry: {
+                type: "Point",
+                coordinates: [45.0623, 7.6627]
+            },
+            $maxDistance: 500
+        }
+    }
+}).count()
